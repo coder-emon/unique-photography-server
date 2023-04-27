@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
@@ -71,8 +71,9 @@ app.get("/services", async (req, res) => {
 })
 app.get("/servicesbyemail", async (req, res) => {
     try {
-        const email = req.params.email
+        const email = req.query.email
         const query = { email: email }
+        console.log(query);
         const cursor = servicesCollection.find(query)
         const services = await cursor.toArray()
         res.send(services)
@@ -81,7 +82,53 @@ app.get("/servicesbyemail", async (req, res) => {
         console.error(err)
     }
 })
+app.get("/service/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const query = { _id: ObjectId(id) }
+        const service = await servicesCollection.findOne(query)
+        res.send(service)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
+app.post("/reviews/", async (req, res) => {
+    try {
+        const review = req.body
 
+        const result = await reviewsCollection.insertOne(review)
+        res.send(result)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
+
+app.get("/reviews/", async (req, res) => {
+    try {
+        const email = req.query.email
+        const query = { email: email }
+        const cursor = reviewsCollection.find(query)
+        const result = await cursor.toArray()
+        res.send(result)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
+app.get("/review/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const query = { service_id: id }
+        const cursor = reviewsCollection.find(query)
+        const result = await cursor.toArray()
+        res.send(result)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
 app.listen(port, () => {
     client.connect((err) => {
         if (err) {
