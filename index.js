@@ -111,6 +111,35 @@ app.put("/service/:id", async (req, res) => {
         console.error(err)
     }
 })
+app.patch("/service/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const query = { _id: ObjectId(id) }
+        const {avgRating} = req.body
+        
+        const updatedService = {
+            $set: {
+                avgRating
+            }
+        }
+        const result = await servicesCollection.updateOne(query, updatedService)
+        res.send(result)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
+app.delete("/service/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const query = { _id: ObjectId(id) }
+        const result = await servicesCollection.deleteOne(query)
+        res.send(result)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
 app.post("/reviews/", async (req, res) => {
     try {
         const review = req.body
