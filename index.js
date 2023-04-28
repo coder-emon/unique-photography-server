@@ -93,6 +93,24 @@ app.get("/service/:id", async (req, res) => {
         console.error(err)
     }
 })
+app.put("/service/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const query = { _id: ObjectId(id) }
+        const service = req.body
+        const options = {
+            upsert: true,
+        }
+        const updatedService = {
+            $set: service
+        }
+        const result = await servicesCollection.updateOne(query, updatedService, options)
+        res.send(result)
+    }
+    catch (err) {
+        console.error(err)
+    }
+})
 app.post("/reviews/", async (req, res) => {
     try {
         const review = req.body
@@ -108,7 +126,7 @@ app.post("/reviews/", async (req, res) => {
 app.get("/reviews/", async (req, res) => {
     try {
         const email = req.query.email
-        const query = { email: email }
+        const query = { usermail: email }
         const cursor = reviewsCollection.find(query)
         const result = await cursor.toArray()
         res.send(result)
