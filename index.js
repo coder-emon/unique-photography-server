@@ -74,17 +74,20 @@ app.post("/services",verifyJWT, async (req, res) => {
 })
 app.get("/services", async (req, res) => {
     try {
+        const size = parseInt(req.query.size)
+        const page = parseInt(req.query.page)
         const query = {}
         const quantity = parseInt(req.query.quantity)
         console.log(quantity);
-        const cursor = servicesCollection.find(query).sort({price:-1})
+        const cursor = servicesCollection.find(query).skip(size*page).limit(size).sort({price:-1})
+        const count = await servicesCollection.estimatedDocumentCount()
         let services;
         if (quantity) {
             services = await cursor.limit(quantity).toArray()
         } else {
             services = await cursor.toArray()
         }
-        res.send(services)
+        res.send({services, count})
     }
     catch (err) {
         console.error(err)
