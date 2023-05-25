@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient,  ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
@@ -72,6 +72,7 @@ app.post("/services",verifyJWT, async (req, res) => {
     }
 
 })
+
 app.get("/services", async (req, res) => {
     try {
         const size = parseInt(req.query.size)
@@ -79,8 +80,8 @@ app.get("/services", async (req, res) => {
         const query = {}
         const quantity = parseInt(req.query.quantity)
         console.log(quantity);
-        const cursor = servicesCollection.find(query).skip(size*page).limit(size).sort({price:-1})
-        const count = await servicesCollection.estimatedDocumentCount()
+        const cursor = servicesCollection.find(query)
+        // const count = await servicesCollection.estimatedDocumentCount()
         let services;
         if (quantity) {
             services = await cursor.limit(quantity).toArray()
