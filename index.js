@@ -11,8 +11,7 @@ const port = process.env.PORT || 5000
 // middle ware 
 app.use(cors())
 app.use(express.json())
-// app.use(express.urlencoded({ extended: true }));
-
+app.use(express.urlencoded({ extended: true }));
 
 
 // const uri = `mongodb+srv://${process.env.user}:${process.env.password}@cluster0.ixsnvhr.mongodb.net/?retryWrites=true&w=majority`;
@@ -63,6 +62,7 @@ app.post("/jwt", (req, res) => {
 app.post("/services",verifyJWT, async (req, res) => {
     try {
         const services = req.body
+       
 
         const user = await servicesCollection.insertOne(services)
         res.send(user)
